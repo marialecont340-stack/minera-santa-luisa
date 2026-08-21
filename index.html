@@ -198,10 +198,6 @@ img { max-width: 100%; display: block; }
   max-width: 340px;
   margin: 10px 0 0;
   line-height: 1.4;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
 }
 .scenario-link {
   margin-top: 14px;
@@ -703,7 +699,7 @@ function renderGauges(ejeStats, ejeMasPresente, totalBase) {
   const desc = document.getElementById("eje-predominante-desc");
   if (ejeMasPresente) {
     titulo.textContent = `EJE PREDOMINANTE: ${ejeMasPresente.toUpperCase()}`;
-    desc.textContent = `${EJE_DESC[ejeMasPresente]} (calculado sobre ${totalBase} ${totalBase === 1 ? "respuesta" : "respuestas"}).`;
+    desc.textContent = EJE_DESC[ejeMasPresente];
   } else {
     titulo.textContent = "EJE PREDOMINANTE: SIN DATOS AÚN";
     desc.textContent = "Se mostrará en cuanto lleguen respuestas del grupo.";
