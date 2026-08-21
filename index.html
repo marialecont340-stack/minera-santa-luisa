@@ -458,28 +458,32 @@ img { max-width: 100%; display: block; }
 const CONFIG = {
   // El ID está en la URL de tu Google Sheet:
   // https://docs.google.com/spreadsheets/d/ESTE_ES_EL_ID/edit
-  SHEET_ID: "TU_SHEET_ID_AQUI",
+  SHEET_ID: "17fgb3dPNQYjcOBNwtgd-uyML72Zlu6vxOvuPOGonOo4",
   // Nombre exacto de la pestaña donde el worker escribe las respuestas
   SHEET_TAB: "Respuestas",
-  // Cada cuántos ms se refresca solo (60000 = 60s)
-  REFRESH_MS: 60000,
+  // Cada cuántos ms se refresca solo (10000 = 10s)
+  REFRESH_MS: 10000,
 };
 
-// Orden de columnas esperado en la hoja (fila 1 = encabezados, se ignora)
-// A: participant_session_id  B: respuesta_1  C: respuesta_2  D: respuesta_3
-// E: fortaleza  F: oportunidad  G: eje_principal  H: eje_a_fortalecer
-// I: compromiso  J: estado
+// Orden de columnas real de la hoja "Respuestas" (fila 1 = encabezados, se ignora)
+// A: Telefono  B: Nombre  C: Respuesta1  D: Respuesta2  E: Respuesta3
+// F: Fortaleza  G: Oportunidad  H: Compromiso  I: Estado  J: Fecha
+//
+// NOTA: esta hoja NO tiene columnas "eje_principal" / "eje_a_fortalecer" todavía,
+// así que los medidores de los 4 ejes (Visión/Objetivos/Personas/Resultados)
+// se mostrarán como "SIN DATOS AÚN" hasta que se agreguen esas dos columnas
+// (con ese nombre exacto, en cualquier posición) a la hoja "Respuestas".
 const COLUMNS = [
-  "participant_session_id",
+  "telefono",
+  "nombre",
   "respuesta_1",
   "respuesta_2",
   "respuesta_3",
   "fortaleza",
   "oportunidad",
-  "eje_principal",
-  "eje_a_fortalecer",
   "compromiso",
   "estado",
+  "fecha",
 ];
 
 const EJES = ["Visión", "Objetivos", "Personas", "Resultados"];
