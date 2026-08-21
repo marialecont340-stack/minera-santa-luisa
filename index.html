@@ -154,6 +154,12 @@ img { max-width: 100%; display: block; }
 }
 .card-title.purple { color: var(--navy); }
 .card-title.orange { color: var(--orange); }
+.card-subtitle {
+  font-size: 11px;
+  color: rgba(26,26,26,0.5);
+  margin: 4px 0 0;
+  line-height: 1.3;
+}
 
 /* Scenario banner */
 .scenario-banner {
@@ -336,7 +342,6 @@ img { max-width: 100%; display: block; }
   gap: 12px;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-behavior: smooth;
 }
 .commitment-card {
   flex: 0 0 220px;
@@ -407,6 +412,7 @@ img { max-width: 100%; display: block; }
 
       <section class="card results-card">
         <h3 class="card-title purple">RESULTADOS CONSOLIDADOS</h3>
+        <p class="card-subtitle">% de respuestas del grupo donde cada eje fue el más presente en la decisión</p>
         <div id="gauges" class="gauges-grid"></div>
         <div class="predominante-box">
           <span class="star">★</span>
@@ -639,6 +645,7 @@ function aggregate(records) {
 
   return {
     nParticipantesCompletados: completados.length,
+    totalBase: total,
     ejeStats,
     ejeMasPresente,
     fortalezaColectiva: fortalezaRanked[0] || null,
@@ -665,7 +672,7 @@ function buildDemoData() {
 // ==========================================================================
 // RENDER
 // ==========================================================================
-function renderGauges(ejeStats, ejeMasPresente) {
+function renderGauges(ejeStats, ejeMasPresente, totalBase) {
   const container = document.getElementById("gauges");
   container.innerHTML = "";
 
@@ -696,7 +703,7 @@ function renderGauges(ejeStats, ejeMasPresente) {
   const desc = document.getElementById("eje-predominante-desc");
   if (ejeMasPresente) {
     titulo.textContent = `EJE PREDOMINANTE: ${ejeMasPresente.toUpperCase()}`;
-    desc.textContent = EJE_DESC[ejeMasPresente];
+    desc.textContent = `${EJE_DESC[ejeMasPresente]} (calculado sobre ${totalBase} ${totalBase === 1 ? "respuesta" : "respuestas"}).`;
   } else {
     titulo.textContent = "EJE PREDOMINANTE: SIN DATOS AÚN";
     desc.textContent = "Se mostrará en cuanto lleguen respuestas del grupo.";
@@ -814,7 +821,7 @@ async function cargarDatos() {
 }
 
 function applyData(data, totalFilas) {
-  renderGauges(data.ejeStats, data.ejeMasPresente);
+  renderGauges(data.ejeStats, data.ejeMasPresente, data.totalBase);
   renderInsights(data.topInsights);
   renderStrengthOpportunity(data.fortalezaColectiva, data.oportunidadColectiva);
   renderCommitments(data.compromisos);
@@ -832,13 +839,40 @@ function setRefreshButtonState(isLoading) {
   btn.childNodes[btn.childNodes.length - 1].textContent = isLoading ? " Actualizando…" : " Actualizar datos";
 }
 
-// Carrusel de compromisos
+// Carrusel de compromisos — auto-scroll continuo, se pausa con hover o al usar las flechas
+const commitmentsTrack = document.getElementById("compromisos-track");
+let autoScrollPaused = false;
+let resumeTimeout = null;
+
+function pauseAutoScrollTemporarily(ms = 2500) {
+  autoScrollPaused = true;
+  clearTimeout(resumeTimeout);
+  resumeTimeout = setTimeout(() => { autoScrollPaused = false; }, ms);
+}
+
 document.getElementById("btn-prev").addEventListener("click", () => {
-  document.getElementById("compromisos-track").scrollBy({ left: -300, behavior: "smooth" });
+  pauseAutoScrollTemporarily();
+  commitmentsTrack.scrollBy({ left: -300, behavior: "smooth" });
 });
 document.getElementById("btn-next").addEventListener("click", () => {
-  document.getElementById("compromisos-track").scrollBy({ left: 300, behavior: "smooth" });
+  pauseAutoScrollTemporarily();
+  commitmentsTrack.scrollBy({ left: 300, behavior: "smooth" });
 });
+commitmentsTrack.addEventListener("mouseenter", () => { autoScrollPaused = true; });
+commitmentsTrack.addEventListener("mouseleave", () => { autoScrollPaused = false; });
+
+const AUTO_SCROLL_SPEED = 0.45; // px por frame (~27px/seg)
+function autoScrollStep() {
+  if (!autoScrollPaused && commitmentsTrack.scrollWidth > commitmentsTrack.clientWidth + 4) {
+    commitmentsTrack.scrollLeft += AUTO_SCROLL_SPEED;
+    if (commitmentsTrack.scrollLeft + commitmentsTrack.clientWidth >= commitmentsTrack.scrollWidth - 1) {
+      commitmentsTrack.scrollLeft = 0;
+    }
+  }
+  requestAnimationFrame(autoScrollStep);
+}
+requestAnimationFrame(autoScrollStep);
+
 document.getElementById("btn-actualizar").addEventListener("click", cargarDatos);
 
 cargarDatos();
