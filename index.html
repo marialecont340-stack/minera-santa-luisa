@@ -9,28 +9,35 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 :root {
-  --purple: #5B3B96;
-  --purple-dark: #3D2670;
-  --purple-light: #EAE4F7;
+  /* Paleta extraída del logo de Minera Santa Luisa */
+  --navy: #032868;
+  --navy-dark: #021A45;
+  --navy-light: #E3E8F2;
   --orange: #F0791F;
   --orange-light: #FDEBDB;
   --blue: #2F6FE0;
   --blue-light: #E1EAFB;
-  --green: #1FA95C;
-  --green-light: #DEF3E7;
-  --ink: #161327;
-  --bg: #F4F5FA;
+  --green: #70B702;
+  --green-dark: #558C01;
+  --green-light: #EAF6D8;
+  --ink: #1A1A1A;
+  --bg: #FFFFFF;
   --font-display: "Sora", "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; }
 
+html, body { height: 100%; }
+
 body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-body);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 img { max-width: 100%; display: block; }
@@ -38,57 +45,57 @@ img { max-width: 100%; display: block; }
 /* Header */
 .header {
   background: #fff;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-bottom: 2px solid var(--green);
+  flex: 0 0 auto;
 }
 .header-inner {
-  max-width: 1400px;
+  max-width: 1500px;
   margin: 0 auto;
-  padding: 16px 24px;
+  padding: 10px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
   flex-wrap: wrap;
 }
-.logo { height: 36px; width: auto; }
+.logo { height: 62px; width: auto; }
 .header-title { text-align: center; flex: 1; min-width: 220px; }
 .header-title h1 {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 800;
   margin: 0;
   letter-spacing: -0.01em;
+  color: var(--navy);
 }
 .header-title p {
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--purple);
+  color: var(--green-dark);
   margin: 2px 0 0;
   letter-spacing: 0.03em;
 }
 .header-actions {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 24px 16px;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-shrink: 0;
 }
-.updated-text { font-size: 12px; color: rgba(22,19,39,0.5); }
+.updated-text { font-size: 11px; color: rgba(26,26,26,0.5); white-space: nowrap; }
 .btn-refresh {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   border-radius: 999px;
   border: 1px solid rgba(0,0,0,0.1);
   background: #fff;
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 6px 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s ease;
+  white-space: nowrap;
 }
 .btn-refresh:hover { background: rgba(0,0,0,0.03); }
 .btn-refresh:disabled { opacity: 0.5; cursor: default; }
@@ -97,18 +104,23 @@ img { max-width: 100%; display: block; }
 
 /* Layout */
 .main {
-  max-width: 1400px;
-  margin: 24px auto 64px;
-  padding: 0 24px;
+  max-width: 1500px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 12px 24px 14px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .banner-alert, .banner-error {
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 14px;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 12px;
+  flex: 0 0 auto;
 }
 .banner-alert { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
 .banner-error { background: #FEF2F2; border: 1px solid #FECACA; color: #B91C1C; }
@@ -116,8 +128,10 @@ img { max-width: 100%; display: block; }
 .row-top {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  gap: 24px;
+  gap: 16px;
   align-items: stretch;
+  flex: 1 1 56%;
+  min-height: 0;
 }
 @media (max-width: 900px) {
   .row-top { grid-template-columns: 1fr; }
@@ -125,201 +139,227 @@ img { max-width: 100%; display: block; }
 
 .card {
   background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 1px 2px rgba(22,19,39,0.04), 0 8px 24px -8px rgba(22,19,39,0.10);
-  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(3,40,104,0.04), 0 6px 18px -8px rgba(3,40,104,0.14);
+  border: 1px solid rgba(3,40,104,0.06);
+  padding: 16px 20px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 .card-title {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.02em;
   margin: 0;
+  flex: 0 0 auto;
 }
-.card-title.purple { color: var(--purple); }
+.card-title.purple { color: var(--navy); }
 .card-title.orange { color: var(--orange); }
 
 /* Scenario banner */
 .scenario-banner {
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  background: linear-gradient(135deg, var(--navy), var(--navy-dark));
   color: #fff;
   display: grid;
   grid-template-columns: 1fr 1.3fr;
-  box-shadow: 0 1px 2px rgba(22,19,39,0.04), 0 8px 24px -8px rgba(22,19,39,0.10);
+  box-shadow: 0 1px 2px rgba(3,40,104,0.04), 0 6px 18px -8px rgba(3,40,104,0.14);
+  min-height: 0;
 }
 @media (max-width: 700px) {
   .scenario-banner { grid-template-columns: 1fr; }
 }
-.scenario-text { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+.scenario-text { padding: 22px 26px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
 .badge {
   display: inline-flex;
   width: fit-content;
-  background: rgba(255,255,255,0.15);
+  background: var(--green);
   border-radius: 999px;
   padding: 4px 12px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.03em;
 }
 .scenario-text h2 {
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 21px;
   font-weight: 800;
   line-height: 1.2;
-  margin: 16px 0 0;
+  margin: 12px 0 0;
 }
 .scenario-text p {
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(255,255,255,0.8);
   max-width: 340px;
-  margin: 16px 0 0;
+  margin: 10px 0 0;
 }
 .scenario-link {
-  margin-top: 24px;
-  color: rgba(255,255,255,0.9);
-  font-size: 14px;
+  margin-top: 14px;
+  color: var(--green);
+  font-size: 13px;
   font-weight: 700;
   text-decoration: none;
   width: fit-content;
 }
 .scenario-link:hover { color: #fff; }
-.scenario-image { position: relative; min-height: 280px; }
+.scenario-image { position: relative; min-height: 0; }
 .scenario-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
 /* Gauges */
 .results-card { display: flex; flex-direction: column; }
 .gauges-grid {
-  margin-top: 24px;
+  margin-top: 14px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 10px;
 }
 @media (max-width: 500px) {
   .gauges-grid { grid-template-columns: repeat(2, 1fr); }
 }
-.gauge-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+.gauge-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; }
 .gauge-svg { transform: rotate(-90deg); }
-.gauge-wrap { position: relative; width: 100px; height: 100px; }
+.gauge-wrap { position: relative; width: 76px; height: 76px; }
 .gauge-percent {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 800;
 }
-.gauge-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+.gauge-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
 
 .predominante-box {
-  margin-top: 24px;
+  margin-top: 14px;
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: flex-start;
-  background: var(--purple-light);
-  border-radius: 14px;
-  padding: 16px;
+  background: var(--navy-light);
+  border-radius: 12px;
+  padding: 12px 14px;
+  flex: 1 1 auto;
 }
-.star { color: var(--purple); margin-top: 2px; }
-.predominante-titulo { font-size: 12px; font-weight: 800; color: var(--purple); margin: 0; }
-.predominante-desc { font-size: 12px; color: rgba(22,19,39,0.6); margin: 4px 0 0; }
+.star { color: var(--navy); margin-top: 2px; }
+.predominante-titulo { font-size: 11px; font-weight: 800; color: var(--navy); margin: 0; }
+.predominante-desc { font-size: 11px; color: rgba(26,26,26,0.6); margin: 3px 0 0; }
 
 /* Fila: insights + fortaleza + oportunidad, en una sola fila de 3 columnas */
 .row-insights {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr;
-  gap: 24px;
+  gap: 16px;
   align-items: stretch;
+  flex: 1 1 26%;
+  min-height: 0;
 }
 @media (max-width: 1000px) {
   .row-insights { grid-template-columns: 1fr; }
 }
 
 .insights-grid {
-  margin-top: 20px;
+  margin-top: 10px;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
 }
 .insight-card {
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 14px;
-  padding: 14px 16px;
+  border: 1px solid rgba(3,40,104,0.08);
+  border-radius: 12px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  min-height: 0;
 }
 .insight-number {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px; height: 32px;
-  border-radius: 10px;
+  width: 26px; height: 26px;
+  border-radius: 8px;
   color: #fff;
   font-weight: 800;
-  font-size: 14px;
+  font-size: 12px;
 }
 .insight-body { flex: 1; min-width: 0; }
 .insight-text {
-  font-size: 14px;
-  color: rgba(22,19,39,0.8);
-  margin: 0 0 8px;
-  line-height: 1.35;
+  font-size: 12px;
+  color: rgba(26,26,26,0.8);
+  margin: 0 0 5px;
+  line-height: 1.25;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 .insight-bar-row { display: flex; align-items: center; gap: 8px; }
-.insight-bar-track { flex: 1; height: 6px; background: rgba(0,0,0,0.06); border-radius: 999px; overflow: hidden; }
+.insight-bar-track { flex: 1; height: 5px; background: rgba(3,40,104,0.06); border-radius: 999px; overflow: hidden; }
 .insight-bar-fill { height: 100%; border-radius: 999px; }
-.insight-pct { font-size: 12px; font-weight: 800; color: rgba(22,19,39,0.6); }
+.insight-pct { font-size: 11px; font-weight: 800; color: rgba(26,26,26,0.6); }
 
 /* Strength / Opportunity */
-.strength-box { margin-top: 16px; display: flex; gap: 16px; align-items: flex-start; }
+.strength-box { margin-top: 10px; display: flex; gap: 12px; align-items: flex-start; min-height: 0; overflow: hidden; }
 .strength-icon {
   flex-shrink: 0;
-  width: 44px; height: 44px;
+  width: 36px; height: 36px;
   border-radius: 999px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+  font-size: 15px;
 }
-.strength-text { font-size: 14px; color: rgba(22,19,39,0.8); line-height: 1.45; }
-.strength-tag { margin-top: 12px; font-size: 12px; font-weight: 800; }
+.strength-text { font-size: 12px; color: rgba(26,26,26,0.8); line-height: 1.35; }
+.strength-tag { margin-top: 8px; font-size: 11px; font-weight: 800; }
 
 /* Commitments carousel */
-.commitments-header { display: flex; align-items: center; justify-content: space-between; }
+.commitments-header { display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; }
 .carousel-controls button {
-  width: 32px; height: 32px;
+  width: 28px; height: 28px;
   border-radius: 999px;
   border: 1px solid rgba(0,0,0,0.1);
   background: #fff;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
+  color: var(--navy);
 }
-.carousel-controls button:hover { background: rgba(0,0,0,0.03); }
+.carousel-controls button:hover { background: rgba(3,40,104,0.05); }
 .commitments-track {
-  margin-top: 20px;
+  margin-top: 10px;
   display: flex;
-  gap: 16px;
+  gap: 12px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding-bottom: 8px;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 .commitment-card {
-  flex: 0 0 240px;
+  flex: 0 0 220px;
   background: #FAFAFC;
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 14px;
-  padding: 20px;
+  border: 1px solid rgba(3,40,104,0.06);
+  border-left: 3px solid var(--green);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-.commitment-quote { font-size: 26px; color: rgba(91,59,150,0.3); line-height: 1; }
-.commitment-text { font-size: 14px; color: rgba(22,19,39,0.8); margin: 4px 0 0; line-height: 1.35; }
-.commitment-author { font-size: 12px; color: rgba(22,19,39,0.4); margin-top: 16px; }
-.empty-text { font-size: 14px; color: rgba(22,19,39,0.5); margin-top: 16px; }
+.commitment-quote { font-size: 20px; color: rgba(3,40,104,0.25); line-height: 1; }
+.commitment-text { font-size: 12px; color: rgba(26,26,26,0.8); margin: 2px 0 0; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.commitment-author { font-size: 10px; color: rgba(26,26,26,0.4); margin-top: 8px; }
+.empty-text { font-size: 12px; color: rgba(26,26,26,0.5); margin-top: 10px; }
+
+.commitments-card { flex: 0 0 auto; height: 138px; }
 
 .footer-note {
   text-align: center;
-  font-size: 12px;
-  color: rgba(22,19,39,0.4);
+  font-size: 10px;
+  color: rgba(26,26,26,0.4);
   padding: 0 16px;
+  margin: 0;
+  flex: 0 0 auto;
 }
 </style>
 </head>
@@ -333,12 +373,12 @@ img { max-width: 100%; display: block; }
         <p>PROCESOS DISCIPLINARIOS</p>
       </div>
       <img src="logo-explorience.png" alt="Explorience" class="logo" />
-    </div>
-    <div class="header-actions">
-      <span id="ultima-actualizacion" class="updated-text">Actualizado —</span>
-      <button id="btn-actualizar" class="btn-refresh">
-        <span id="refresh-icon">⟳</span> Actualizar datos
-      </button>
+      <div class="header-actions">
+        <span id="ultima-actualizacion" class="updated-text">Actualizado —</span>
+        <button id="btn-actualizar" class="btn-refresh">
+          <span id="refresh-icon">⟳</span> Actualizar datos
+        </button>
+      </div>
     </div>
   </header>
 
@@ -390,7 +430,7 @@ img { max-width: 100%; display: block; }
       </section>
     </div>
 
-    <section class="card">
+    <section class="card commitments-card">
       <div class="commitments-header">
         <h3 class="card-title purple">👥 COMPROMISOS DEL EQUIPO</h3>
         <div class="carousel-controls">
@@ -441,10 +481,10 @@ const COLUMNS = [
 
 const EJES = ["Visión", "Objetivos", "Personas", "Resultados"];
 const EJE_META = {
-  "Visión": { color: "#5B3B96", track: "#EAE4F7" },
+  "Visión": { color: "#032868", track: "#E3E8F2" },
   "Objetivos": { color: "#F0791F", track: "#FDEBDB" },
   "Personas": { color: "#2F6FE0", track: "#E1EAFB" },
-  "Resultados": { color: "#1FA95C", track: "#DEF3E7" },
+  "Resultados": { color: "#70B702", track: "#EAF6D8" },
 };
 const EJE_DESC = {
   "Visión": "Cultura, estándares y coherencia.",
@@ -452,7 +492,7 @@ const EJE_DESC = {
   "Personas": "Escucha, respeto y ausencia de favoritismo.",
   "Resultados": "Actuación, documentación y cumplimiento.",
 };
-const ACCENTS = ["#5B3B96", "#F0791F", "#1FA95C"];
+const ACCENTS = ["#032868", "#F0791F", "#70B702"];
 
 // ==========================================================================
 // CSV — descarga y parseo (soporta comillas, comas y saltos de línea dentro de celdas)
@@ -669,10 +709,10 @@ function renderInsights(insights) {
 function renderStrengthOpportunity(fortaleza, oportunidad) {
   const fBox = document.getElementById("fortaleza-box");
   fBox.innerHTML = fortaleza ? `
-    <div class="strength-icon" style="background:#F5F2FB; color:#5B3B96;">●</div>
+    <div class="strength-icon" style="background:#E3E8F2; color:#032868;">●</div>
     <div>
       <p class="strength-text">El grupo demuestra una fuerte presencia de "${escapeHtml(fortaleza.texto)}" en sus decisiones.</p>
-      <p class="strength-tag" style="color:#5B3B96;">${fortaleza.porcentaje}% de las respuestas lo evidencian.</p>
+      <p class="strength-tag" style="color:#032868;">${fortaleza.porcentaje}% de las respuestas lo evidencian.</p>
     </div>
   ` : `<p class="strength-text">Aún no hay suficientes respuestas para identificar un patrón.</p>`;
 
