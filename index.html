@@ -290,7 +290,7 @@ img { max-width: 100%; display: block; }
   line-height: 1.25;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
 }
 .insight-bar-row { display: flex; align-items: center; gap: 8px; }
@@ -313,7 +313,7 @@ img { max-width: 100%; display: block; }
   line-height: 1.35;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 8;
   -webkit-box-orient: vertical;
 }
 .strength-tag { margin-top: 8px; font-size: 11px; font-weight: 800; }
@@ -469,10 +469,9 @@ const CONFIG = {
 // A: Telefono  B: Nombre  C: Respuesta1  D: Respuesta2  E: Respuesta3
 // F: Fortaleza  G: Oportunidad  H: Compromiso  I: Estado  J: Fecha
 //
-// NOTA: esta hoja NO tiene columnas "eje_principal" / "eje_a_fortalecer" todavía,
-// así que los medidores de los 4 ejes (Visión/Objetivos/Personas/Resultados)
-// se mostrarán como "SIN DATOS AÚN" hasta que se agreguen esas dos columnas
-// (con ese nombre exacto, en cualquier posición) a la hoja "Respuestas".
+// Los 4 medidores de eje (Visión/Objetivos/Personas/Resultados) NO dependen de
+// columnas adicionales en el Sheet: se calculan automáticamente clasificando por
+// palabras clave el texto de Fortaleza/Oportunidad/Compromiso (ver classifyEje más abajo).
 const COLUMNS = [
   "telefono",
   "nombre",
@@ -556,13 +555,28 @@ function normalizeText(value) {
     .toLowerCase();
 }
 
-function normalizeEje(value) {
-  const v = normalizeText(value);
-  if (v.startsWith("vision")) return "Visión";
-  if (v.startsWith("objetivo")) return "Objetivos";
-  if (v.startsWith("persona")) return "Personas";
-  if (v.startsWith("resultado")) return "Resultados";
-  return null;
+// Clasificador de eje por palabras clave — no depende de columnas eje_principal/eje_a_fortalecer,
+// infiere el eje directamente del texto que la IA ya escribe en Fortaleza/Oportunidad/Compromiso.
+// Es una aproximación heurística: si más adelante el worker de n8n mapea el campo
+// "Ejes puestos a prueba" (que la IA ya genera) a una columna del Sheet, se puede
+// reemplazar esto por una lectura directa y más precisa.
+const EJE_KEYWORDS = {
+  "Visión": ["cultura", "estandar", "coherencia", "valores", "consistencia", "criterio", "principio", "firmeza", "politica"],
+  "Objetivos": ["regla", "reglas", "expectativa", "responsabilidad", "claridad", "procedimiento", "norma", "sancion", "disciplina"],
+  "Personas": ["escucha", "respeto", "equidad", "favoritismo", "relacion", "empatia", "trato", "imparcial", "parcial", "cercania", "confianza"],
+  "Resultados": ["documentacion", "seguimiento", "cumplimiento", "verificacion", "accion", "reporte", "registro", "evidencia", "por escrito"],
+};
+
+function classifyEje(text) {
+  const norm = normalizeText(text);
+  if (!norm) return null;
+  const ranked = EJES
+    .map((eje) => ({
+      eje,
+      hits: EJE_KEYWORDS[eje].reduce((acc, kw) => acc + (norm.includes(kw) ? 1 : 0), 0),
+    }))
+    .sort((a, b) => b.hits - a.hits);
+  return ranked[0].hits > 0 ? ranked[0].eje : null;
 }
 
 function isCompletado(estado) {
@@ -596,9 +610,9 @@ function aggregate(records) {
   const aFortalecerCounts = new Map(EJES.map((e) => [e, 0]));
 
   base.forEach((row) => {
-    const eje = normalizeEje(row.eje_principal);
+    const eje = classifyEje(`${row.fortaleza} ${row.compromiso}`);
     if (eje) ejeCounts.set(eje, ejeCounts.get(eje) + 1);
-    const ejeAF = normalizeEje(row.eje_a_fortalecer);
+    const ejeAF = classifyEje(row.oportunidad);
     if (ejeAF) aFortalecerCounts.set(ejeAF, aFortalecerCounts.get(ejeAF) + 1);
   });
 
@@ -607,7 +621,7 @@ function aggregate(records) {
     return { eje, conteo, porcentaje: total > 0 ? Math.round((conteo / total) * 100) : 0 };
   });
 
-  const ejeMasPresente = total > 0
+  const ejeMasPresente = total > 0 && ejeStats.some((s) => s.conteo > 0)
     ? ejeStats.reduce((a, b) => (b.conteo > a.conteo ? b : a)).eje
     : null;
 
