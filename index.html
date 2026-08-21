@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simulación Workshop · Procesos Disciplinarios | Minera Santa Luisa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <img src="logo-santa-luisa.png" alt="Minera Santa Luisa" class="logo" />
+      <div class="header-title">
+        <h1>SIMULACIÓN WORKSHOP</h1>
+        <p>PROCESOS DISCIPLINARIOS</p>
+      </div>
+      <img src="logo-explorience.png" alt="Explorience" class="logo" />
+    </div>
+    <div class="header-actions">
+      <span id="ultima-actualizacion" class="updated-text">Actualizado —</span>
+      <button id="btn-actualizar" class="btn-refresh">
+        <span id="refresh-icon">⟳</span> Actualizar datos
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <div id="banner-demo" class="banner-alert" hidden>
+      <strong>Modo demostración.</strong> Aún no está conectado el Google Sheet — estos son datos de ejemplo.
+    </div>
+    <div id="banner-error" class="banner-error" hidden></div>
+
+    <div class="row-top">
+      <section class="scenario-banner">
+        <div class="scenario-text">
+          <span class="badge">ESCENARIO 1</span>
+          <h2>CUANDO LA CONFIANZA<br />PONE A PRUEBA EL<br />CRITERIO</h2>
+          <p>Conversaciones difíciles también son parte del liderazgo. Las decisiones se ponen a prueba cuando la confianza y la cercanía entran en juego.</p>
+          <a href="#" class="scenario-link">Ver más del escenario →</a>
+        </div>
+        <div class="scenario-image">
+          <img src="imagen-escenario.jpg" alt="Escenario 1 — Minera Santa Luisa" />
+        </div>
+      </section>
+
+      <section class="card results-card">
+        <h3 class="card-title purple">RESULTADOS CONSOLIDADOS</h3>
+        <div id="gauges" class="gauges-grid"></div>
+        <div class="predominante-box">
+          <span class="star">★</span>
+          <div>
+            <p id="eje-predominante-titulo" class="predominante-titulo">EJE PREDOMINANTE: —</p>
+            <p id="eje-predominante-desc" class="predominante-desc">Se mostrará en cuanto lleguen respuestas del grupo.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h3 class="card-title purple">3 INSIGHTS MÁS RELEVANTES</h3>
+      <div id="insights" class="insights-grid"></div>
+    </section>
+
+    <div class="row-strength">
+      <section class="card">
+        <h3 class="card-title purple">FORTALEZA COLECTIVA PRINCIPAL</h3>
+        <div id="fortaleza-box" class="strength-box"></div>
+      </section>
+      <section class="card">
+        <h3 class="card-title orange">MAYOR OPORTUNIDAD DE FORTALECIMIENTO</h3>
+        <div id="oportunidad-box" class="strength-box"></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <div class="commitments-header">
+        <h3 class="card-title purple">👥 COMPROMISOS DEL EQUIPO</h3>
+        <div class="carousel-controls">
+          <button id="btn-prev" aria-label="Anterior">‹</button>
+          <button id="btn-next" aria-label="Siguiente">›</button>
+        </div>
+      </div>
+      <div id="compromisos-track" class="commitments-track"></div>
+    </section>
+
+    <p class="footer-note">
+      Los resultados mostrados son anónimos y consolidados. Se generan a partir de las respuestas reales del grupo analizadas por la IA bajo los 4 ejes del Líder Equilibrado.
+      <span id="footer-count"></span>
+    </p>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
