@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simulación Workshop · Procesos Disciplinarios | Minera Santa Luisa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  /* Paleta extraída del logo de Minera Santa Luisa */
+  --navy: #032868;
+  --navy-dark: #021A45;
+  --navy-light: #E3E8F2;
+  --orange: #F0791F;
+  --orange-light: #FDEBDB;
+  --blue: #2F6FE0;
+  --blue-light: #E1EAFB;
+  --green: #70B702;
+  --green-dark: #558C01;
+  --green-light: #EAF6D8;
+  --ink: #1A1A1A;
+  --bg: #FFFFFF;
+  --font-display: "Sora", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+}
+
+img { max-width: 100%; display: block; }
+
+/* Header */
+.header {
+  background: #fff;
+  border-bottom: 2px solid var(--green);
+  flex: 0 0 auto;
+}
+.header-inner {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 6px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.logo { height: 46px; width: auto; }
+.header-title { text-align: center; flex: 1; min-width: 220px; }
+.header-title h1 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+}
+.header-title p {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin: 1px 0 0;
+  letter-spacing: 0.03em;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.updated-text { font-size: 11px; color: rgba(26,26,26,0.5); white-space: nowrap; }
+.btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: #fff;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+.btn-refresh:hover { background: rgba(0,0,0,0.03); }
+.btn-refresh:disabled { opacity: 0.5; cursor: default; }
+.spin { display: inline-block; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Layout */
+.main {
+  max-width: 1500px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 8px 24px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.banner-alert, .banner-error {
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 11px;
+  flex: 0 0 auto;
+}
+.banner-alert { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
+.banner-error { background: #FEF2F2; border: 1px solid #FECACA; color: #B91C1C; }
+
+.row-top {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+  flex: 0 0 auto;
+}
+@media (max-width: 900px) {
+  .row-top { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(3,40,104,0.04), 0 6px 18px -8px rgba(3,40,104,0.14);
+  border: 1px solid rgba(3,40,104,0.06);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  margin: 0;
+  flex: 0 0 auto;
+}
+.card-title.purple { color: var(--navy); }
+.card-title.orange { color: var(--orange); }
+.card-subtitle {
+  font-size: 11px;
+  color: rgba(26,26,26,0.5);
+  margin: 4px 0 0;
+  line-height: 1.3;
+}
+
+/* Scenario banner */
+.scenario-banner {
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--navy), var(--navy-dark));
+  color: #fff;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  box-shadow: 0 1px 2px rgba(3,40,104,0.04), 0 6px 18px -8px rgba(3,40,104,0.14);
+}
+@media (max-width: 700px) {
+  .scenario-banner { grid-template-columns: 1fr; }
+}
+.scenario-text { padding: 22px 26px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.badge {
+  display: inline-flex;
+  width: fit-content;
+  background: var(--green);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.scenario-text h2 {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 12px 0 0;
+}
+.scenario-text p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  max-width: 340px;
+  margin: 10px 0 0;
+  line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.scenario-link {
+  margin-top: 14px;
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  width: fit-content;
+}
+.scenario-link:hover { color: #fff; }
+.scenario-image { position: relative; min-height: 0; }
+.scenario-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* Gauges */
+.results-card { display: flex; flex-direction: column; }
+.gauges-grid {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+@media (max-width: 500px) {
+  .gauges-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.gauge-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
+.gauge-svg { transform: rotate(-90deg); display: block; width: 100%; height: 100%; }
+.gauge-wrap { position: relative; width: 62px; height: 62px; flex: 0 0 auto; }
+.gauge-percent {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
+}
+.gauge-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+
+.predominante-box {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: var(--navy-light);
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+.star { color: var(--navy); margin-top: 2px; }
+.predominante-titulo { font-size: 11px; font-weight: 800; color: var(--navy); margin: 0; }
+.predominante-desc { font-size: 11px; color: rgba(26,26,26,0.6); margin: 3px 0 0; }
+
+/* Fila: insights + fortaleza + oportunidad, en una sola fila de 3 columnas */
+.row-insights {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 10px;
+  align-items: stretch;
+  flex: 0 0 auto;
+}
+@media (max-width: 1000px) {
+  .row-insights { grid-template-columns: 1fr; }
+}
+
+.insights-grid {
+  margin-top: 6px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.insight-card {
+  border: 1px solid rgba(3,40,104,0.08);
+  border-radius: 10px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.insight-number {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 7px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 11px;
+}
+.insight-body { flex: 1; min-width: 0; }
+.insight-text {
+  font-size: 11.5px;
+  color: rgba(26,26,26,0.8);
+  margin: 0 0 4px;
+  line-height: 1.2;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.insight-bar-row { display: flex; align-items: center; gap: 8px; }
+.insight-bar-track { flex: 1; height: 4px; background: rgba(3,40,104,0.06); border-radius: 999px; overflow: hidden; }
+.insight-bar-fill { height: 100%; border-radius: 999px; }
+.insight-pct { font-size: 10.5px; font-weight: 800; color: rgba(26,26,26,0.6); }
+
+/* Strength / Opportunity */
+.strength-box { margin-top: 6px; display: flex; gap: 10px; align-items: flex-start; }
+.strength-icon {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.strength-text {
+  font-size: 11.5px;
+  color: rgba(26,26,26,0.8);
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+}
+.strength-tag { margin-top: 6px; font-size: 10.5px; font-weight: 800; }
+
+/* Commitments carousel */
+.commitments-header { display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; }
+.carousel-controls button {
+  width: 24px; height: 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--navy);
+}
+.carousel-controls button:hover { background: rgba(3,40,104,0.05); }
+.commitments-track {
+  margin-top: 6px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.commitment-card {
+  flex: 0 0 220px;
+  background: #FAFAFC;
+  border: 1px solid rgba(3,40,104,0.06);
+  border-left: 3px solid var(--green);
+  border-radius: 12px;
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.commitment-quote { font-size: 17px; color: rgba(3,40,104,0.25); line-height: 1; flex: 0 0 auto; }
+.commitment-text { font-size: 11.5px; color: rgba(26,26,26,0.8); margin: 2px 0 0; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.commitment-author { font-size: 9.5px; color: rgba(26,26,26,0.4); margin-top: 6px; flex: 0 0 auto; }
+.empty-text { font-size: 12px; color: rgba(26,26,26,0.5); margin-top: 6px; }
+
+.commitments-card { flex: 0 0 auto; }
+
+.footer-note {
+  text-align: center;
+  font-size: 9.5px;
+  color: rgba(26,26,26,0.4);
+  padding: 0 16px;
+  margin: 0;
+  flex: 0 0 auto;
+}
+</style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <img src="logo-santa-luisa.png" alt="Minera Santa Luisa" class="logo" />
+      <div class="header-title">
+        <h1>SIMULACIÓN WORKSHOP</h1>
+        <p>PROCESOS DISCIPLINARIOS</p>
+      </div>
+      <img src="logo-explorience.png" alt="Explorience" class="logo" />
+      <div class="header-actions">
+        <span id="ultima-actualizacion" class="updated-text">Actualizado —</span>
+        <button id="btn-actualizar" class="btn-refresh">
+          <span id="refresh-icon">⟳</span> Actualizar datos
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <div id="banner-demo" class="banner-alert" hidden>
+      <strong>Modo demostración.</strong> Aún no está conectado el Google Sheet — estos son datos de ejemplo.
+    </div>
+    <div id="banner-error" class="banner-error" hidden></div>
+
+    <div class="row-top">
+      <section class="scenario-banner">
+        <div class="scenario-text">
+          <span class="badge">ESCENARIO 1</span>
+          <h2>CUANDO LA CONFIANZA<br />PONE A PRUEBA EL<br />CRITERIO</h2>
+          <p>Conversaciones difíciles también son parte del liderazgo. Las decisiones se ponen a prueba cuando la confianza y la cercanía entran en juego.</p>
+          <a href="#" class="scenario-link">Ver más del escenario →</a>
+        </div>
+        <div class="scenario-image">
+          <img src="imagen-escenario.png" alt="Escenario 1 — Minera Santa Luisa" />
+        </div>
+      </section>
+
+      <section class="card results-card">
+        <h3 class="card-title purple">RESULTADOS CONSOLIDADOS</h3>
+        <p class="card-subtitle">% de respuestas del grupo donde cada eje fue el más presente en la decisión</p>
+        <div id="gauges" class="gauges-grid"></div>
+        <div class="predominante-box">
+          <span class="star">★</span>
+          <div>
+            <p id="eje-predominante-titulo" class="predominante-titulo">EJE PREDOMINANTE: —</p>
+            <p id="eje-predominante-desc" class="predominante-desc">Se mostrará en cuanto lleguen respuestas del grupo.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="row-insights">
+      <section class="card">
+        <h3 class="card-title purple">3 INSIGHTS MÁS RELEVANTES</h3>
+        <div id="insights" class="insights-grid"></div>
+      </section>
+      <section class="card">
+        <h3 class="card-title purple">FORTALEZA COLECTIVA PRINCIPAL</h3>
+        <div id="fortaleza-box" class="strength-box"></div>
+      </section>
+      <section class="card">
+        <h3 class="card-title orange">MAYOR OPORTUNIDAD DE FORTALECIMIENTO</h3>
+        <div id="oportunidad-box" class="strength-box"></div>
+      </section>
+    </div>
+
+    <section class="card commitments-card">
+      <div class="commitments-header">
+        <h3 class="card-title purple">👥 COMPROMISOS DEL EQUIPO</h3>
+        <div class="carousel-controls">
+          <button id="btn-prev" aria-label="Anterior">‹</button>
+          <button id="btn-next" aria-label="Siguiente">›</button>
+        </div>
+      </div>
+      <div id="compromisos-track" class="commitments-track"></div>
+    </section>
+
+    <p class="footer-note">
+      Los resultados mostrados son anónimos y consolidados. Se generan a partir de las respuestas reales del grupo analizadas por la IA bajo los 4 ejes del Líder Equilibrado.
+      <span id="footer-count"></span>
+    </p>
+
+  </main>
+
+<script>
+// ==========================================================================
+// CONFIGURACIÓN — esto es lo único que normalmente necesitas tocar
+// ==========================================================================
+const CONFIG = {
+  // El ID está en la URL de tu Google Sheet:
+  // https://docs.google.com/spreadsheets/d/ESTE_ES_EL_ID/edit
+  SHEET_ID: "17fgb3dPNQYjcOBNwtgd-uyML72Zlu6vxOvuPOGonOo4",
+  // Nombre exacto de la pestaña donde el worker escribe las respuestas
+  SHEET_TAB: "Respuestas",
+  // Cada cuántos ms se refresca solo (10000 = 10s)
+  REFRESH_MS: 10000,
+};
+
+// Orden de columnas real de la hoja "Respuestas" (fila 1 = encabezados, se ignora)
+// A: Telefono  B: Nombre  C: Respuesta1  D: Respuesta2  E: Respuesta3
+// F: Fortaleza  G: Oportunidad  H: Compromiso  I: Estado  J: Fecha
+//
+// Los 4 medidores de eje (Visión/Objetivos/Personas/Resultados) NO dependen de
+// columnas adicionales en el Sheet: se calculan automáticamente clasificando por
+// palabras clave el texto de Fortaleza/Oportunidad/Compromiso (ver classifyEje más abajo).
+const COLUMNS = [
+  "telefono",
+  "nombre",
+  "respuesta_1",
+  "respuesta_2",
+  "respuesta_3",
+  "fortaleza",
+  "oportunidad",
+  "compromiso",
+  "estado",
+  "fecha",
+];
+
+const EJES = ["Visión", "Objetivos", "Personas", "Resultados"];
+const EJE_META = {
+  "Visión": { color: "#032868", track: "#E3E8F2" },
+  "Objetivos": { color: "#F0791F", track: "#FDEBDB" },
+  "Personas": { color: "#2F6FE0", track: "#E1EAFB" },
+  "Resultados": { color: "#70B702", track: "#EAF6D8" },
+};
+const EJE_DESC = {
+  "Visión": "Cultura, estándares y coherencia.",
+  "Objetivos": "Claridad de expectativas y responsabilidades.",
+  "Personas": "Escucha, respeto y ausencia de favoritismo.",
+  "Resultados": "Actuación, documentación y cumplimiento.",
+};
+const ACCENTS = ["#032868", "#F0791F", "#70B702"];
+
+// ==========================================================================
+// CSV — descarga y parseo (soporta comillas, comas y saltos de línea dentro de celdas)
+// ==========================================================================
+function buildCsvUrl() {
+  return `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(CONFIG.SHEET_TAB)}`;
+}
+
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const next = text[i + 1];
+
+    if (inQuotes) {
+      if (char === '"' && next === '"') { field += '"'; i++; }
+      else if (char === '"') { inQuotes = false; }
+      else { field += char; }
+    } else {
+      if (char === '"') inQuotes = true;
+      else if (char === ",") { row.push(field); field = ""; }
+      else if (char === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
+      else if (char === "\r") { /* ignore */ }
+      else { field += char; }
+    }
+  }
+  if (field !== "" || row.length > 0) { row.push(field); rows.push(row); }
+  return rows;
+}
+
+function rowsToRecords(rows) {
+  // rows[0] = encabezados -> se salta
+  return rows.slice(1)
+    .filter((r) => r.some((cell) => (cell || "").trim() !== ""))
+    .map((r) => {
+      const record = {};
+      COLUMNS.forEach((key, i) => { record[key] = (r[i] || "").trim(); });
+      return record;
+    });
+}
+
+// ==========================================================================
+// AGREGACIÓN — igual lógica que usaría un backend, pero corriendo en el navegador
+// ==========================================================================
+function normalizeText(value) {
+  return (value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+// Clasificador de eje por palabras clave — no depende de columnas eje_principal/eje_a_fortalecer,
+// infiere el eje directamente del texto que la IA ya escribe en Fortaleza/Oportunidad/Compromiso.
+// Es una aproximación heurística: si más adelante el worker de n8n mapea el campo
+// "Ejes puestos a prueba" (que la IA ya genera) a una columna del Sheet, se puede
+// reemplazar esto por una lectura directa y más precisa.
+const EJE_KEYWORDS = {
+  "Visión": ["cultura", "estandar", "coherencia", "valores", "consistencia", "criterio", "principio", "firmeza", "politica"],
+  "Objetivos": ["regla", "reglas", "expectativa", "responsabilidad", "claridad", "procedimiento", "norma", "sancion", "disciplina"],
+  "Personas": ["escucha", "respeto", "equidad", "favoritismo", "relacion", "empatia", "trato", "imparcial", "parcial", "cercania", "confianza"],
+  "Resultados": ["documentacion", "seguimiento", "cumplimiento", "verificacion", "accion", "reporte", "registro", "evidencia", "por escrito"],
+};
+
+function classifyEje(text) {
+  const norm = normalizeText(text);
+  if (!norm) return null;
+  const ranked = EJES
+    .map((eje) => ({
+      eje,
+      hits: EJE_KEYWORDS[eje].reduce((acc, kw) => acc + (norm.includes(kw) ? 1 : 0), 0),
+    }))
+    .sort((a, b) => b.hits - a.hits);
+  return ranked[0].hits > 0 ? ranked[0].eje : null;
+}
+
+function isCompletado(estado) {
+  const v = normalizeText(estado);
+  return v === "completado" || v === "completo" || v === "finalizado";
+}
+
+function rankPatterns(values, denominator) {
+  const counts = new Map();
+  values.filter((v) => v.trim() !== "").forEach((raw) => {
+    const key = normalizeText(raw);
+    const existing = counts.get(key);
+    if (existing) existing.count += 1;
+    else counts.set(key, { original: raw.trim(), count: 1 });
+  });
+  return Array.from(counts.values())
+    .map(({ original, count }) => ({
+      texto: original,
+      conteo: count,
+      porcentaje: denominator > 0 ? Math.round((count / denominator) * 100) : 0,
+    }))
+    .sort((a, b) => b.conteo - a.conteo);
+}
+
+function aggregate(records) {
+  const completados = records.filter((r) => isCompletado(r.estado));
+  const base = completados.length > 0 ? completados : records;
+  const total = base.length;
+
+  const ejeCounts = new Map(EJES.map((e) => [e, 0]));
+  const aFortalecerCounts = new Map(EJES.map((e) => [e, 0]));
+
+  base.forEach((row) => {
+    const eje = classifyEje(`${row.fortaleza} ${row.compromiso}`);
+    if (eje) ejeCounts.set(eje, ejeCounts.get(eje) + 1);
+    const ejeAF = classifyEje(row.oportunidad);
+    if (ejeAF) aFortalecerCounts.set(ejeAF, aFortalecerCounts.get(ejeAF) + 1);
+  });
+
+  const ejeStats = EJES.map((eje) => {
+    const conteo = ejeCounts.get(eje) || 0;
+    return { eje, conteo, porcentaje: total > 0 ? Math.round((conteo / total) * 100) : 0 };
+  });
+
+  const ejeMasPresente = total > 0 && ejeStats.some((s) => s.conteo > 0)
+    ? ejeStats.reduce((a, b) => (b.conteo > a.conteo ? b : a)).eje
+    : null;
+
+  const ejeAFRanked = EJES.map((eje) => ({ eje, conteo: aFortalecerCounts.get(eje) || 0 }))
+    .sort((a, b) => b.conteo - a.conteo);
+  const ejeAFortalecer = total > 0 && ejeAFRanked[0].conteo > 0 ? ejeAFRanked[0].eje : null;
+
+  const fortalezaRanked = rankPatterns(base.map((r) => r.fortaleza), total);
+  const oportunidadRanked = rankPatterns(base.map((r) => r.oportunidad), total);
+  const topInsights = [...fortalezaRanked, ...oportunidadRanked]
+    .sort((a, b) => b.conteo - a.conteo)
+    .slice(0, 3);
+
+  const compromisos = base.map((r) => r.compromiso).filter((c) => c.trim() !== "").reverse();
+
+  return {
+    nParticipantesCompletados: completados.length,
+    totalBase: total,
+    ejeStats,
+    ejeMasPresente,
+    fortalezaColectiva: fortalezaRanked[0] || null,
+    oportunidadColectiva: oportunidadRanked[0] || null,
+    topInsights,
+    compromisos,
+  };
+}
+
+// ==========================================================================
+// DATOS DE DEMOSTRACIÓN — se usan si el Sheet no está configurado o falla la carga
+// ==========================================================================
+function buildDemoData() {
+  const demoRows = [
+    { fortaleza: "Objetividad", oportunidad: "Documentación", eje_principal: "Personas", eje_a_fortalecer: "Resultados", compromiso: "Voy a documentar cada llamado de atención, sin excepción.", estado: "completado" },
+    { fortaleza: "Escucha activa", oportunidad: "Documentación", eje_principal: "Personas", eje_a_fortalecer: "Resultados", compromiso: "Aplicar el mismo criterio sin importar la cercanía con la persona.", estado: "completado" },
+    { fortaleza: "Objetividad", oportunidad: "Reporte oportuno", eje_principal: "Resultados", eje_a_fortalecer: "Personas", compromiso: "Reportar a tiempo aunque la conversación ya se haya dado en privado.", estado: "completado" },
+    { fortaleza: "Consistencia", oportunidad: "Documentación", eje_principal: "Objetivos", eje_a_fortalecer: "Personas", compromiso: "Escuchar a todo el equipo antes de decidir.", estado: "completado" },
+    { fortaleza: "Escucha activa", oportunidad: "Seguimiento", eje_principal: "Personas", eje_a_fortalecer: "Resultados", compromiso: "Dar seguimiento por escrito a cada acuerdo verbal.", estado: "completado" },
+  ];
+  return aggregate(demoRows);
+}
+
+// ==========================================================================
+// RENDER
+// ==========================================================================
+function renderGauges(ejeStats, ejeMasPresente, totalBase) {
+  const container = document.getElementById("gauges");
+  container.innerHTML = "";
+
+  ejeStats.forEach((stat) => {
+    const meta = EJE_META[stat.eje];
+    const size = 100, stroke = 9;
+    const radius = (size - stroke) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (Math.min(Math.max(stat.porcentaje, 0), 100) / 100) * circumference;
+
+    const item = document.createElement("div");
+    item.className = "gauge-item";
+    item.innerHTML = `
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+          <circle cx="${size/2}" cy="${size/2}" r="${radius}" fill="none" stroke="${meta.track}" stroke-width="${stroke}" />
+          <circle cx="${size/2}" cy="${size/2}" r="${radius}" fill="none" stroke="${meta.color}" stroke-width="${stroke}"
+            stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" />
+        </svg>
+        <div class="gauge-percent">${stat.porcentaje}%</div>
+      </div>
+      <span class="gauge-label">${stat.eje}</span>
+    `;
+    container.appendChild(item);
+  });
+
+  const titulo = document.getElementById("eje-predominante-titulo");
+  const desc = document.getElementById("eje-predominante-desc");
+  if (ejeMasPresente) {
+    titulo.textContent = `EJE PREDOMINANTE: ${ejeMasPresente.toUpperCase()}`;
+    desc.textContent = `${EJE_DESC[ejeMasPresente]} (calculado sobre ${totalBase} ${totalBase === 1 ? "respuesta" : "respuestas"}).`;
+  } else {
+    titulo.textContent = "EJE PREDOMINANTE: SIN DATOS AÚN";
+    desc.textContent = "Se mostrará en cuanto lleguen respuestas del grupo.";
+  }
+}
+
+function renderInsights(insights) {
+  const container = document.getElementById("insights");
+  container.innerHTML = "";
+  const items = insights.length > 0 ? insights : [null, null, null];
+
+  items.forEach((insight, i) => {
+    const card = document.createElement("div");
+    card.className = "insight-card";
+    card.innerHTML = `
+      <span class="insight-number" style="background:${ACCENTS[i]}">${i + 1}</span>
+      <div class="insight-body">
+        <p class="insight-text">${insight ? escapeHtml(insight.texto) : "Aún sin suficientes respuestas."}</p>
+        <div class="insight-bar-row">
+          <div class="insight-bar-track">
+            <div class="insight-bar-fill" style="width:${insight ? insight.porcentaje : 0}%; background:${ACCENTS[i]}"></div>
+          </div>
+          <span class="insight-pct">${insight ? insight.porcentaje + "%" : "—"}</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function renderStrengthOpportunity(fortaleza, oportunidad) {
+  const fBox = document.getElementById("fortaleza-box");
+  fBox.innerHTML = fortaleza ? `
+    <div class="strength-icon" style="background:#E3E8F2; color:#032868;">●</div>
+    <div>
+      <p class="strength-text">El grupo demuestra una fuerte presencia de "${escapeHtml(fortaleza.texto)}" en sus decisiones.</p>
+      <p class="strength-tag" style="color:#032868;">${fortaleza.porcentaje}% de las respuestas lo evidencian.</p>
+    </div>
+  ` : `<p class="strength-text">Aún no hay suficientes respuestas para identificar un patrón.</p>`;
+
+  const oBox = document.getElementById("oportunidad-box");
+  oBox.innerHTML = oportunidad ? `
+    <div class="strength-icon" style="background:#FDEBDB; color:#F0791F;">▲</div>
+    <div>
+      <p class="strength-text">"${escapeHtml(oportunidad.texto)}" es el patrón de mejora más señalado por el grupo.</p>
+      <p class="strength-tag" style="color:#F0791F;">Es la oportunidad más señalada por el grupo.</p>
+    </div>
+  ` : `<p class="strength-text">Aún no hay suficientes respuestas para identificar un patrón.</p>`;
+}
+
+function renderCommitments(compromisos) {
+  const track = document.getElementById("compromisos-track");
+  track.innerHTML = "";
+  if (compromisos.length === 0) {
+    track.innerHTML = `<p class="empty-text">Los compromisos del equipo aparecerán aquí en cuanto los participantes completen la simulación.</p>`;
+    return;
+  }
+  compromisos.forEach((texto) => {
+    const card = document.createElement("div");
+    card.className = "commitment-card";
+    card.innerHTML = `
+      <div class="commitment-quote">&ldquo;</div>
+      <p class="commitment-text">${escapeHtml(texto)}</p>
+      <p class="commitment-author">Participante anónimo</p>
+    `;
+    track.appendChild(card);
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ==========================================================================
+// CARGA PRINCIPAL
+// ==========================================================================
+let cargando = false;
+
+async function cargarDatos() {
+  if (cargando) return;
+  cargando = true;
+  setRefreshButtonState(true);
+
+  const demoBanner = document.getElementById("banner-demo");
+  const errorBanner = document.getElementById("banner-error");
+  errorBanner.hidden = true;
+
+  try {
+    if (!CONFIG.SHEET_ID || CONFIG.SHEET_ID === "TU_SHEET_ID_AQUI") {
+      demoBanner.hidden = false;
+      applyData(buildDemoData());
+      return;
+    }
+
+    const res = await fetch(buildCsvUrl());
+    if (!res.ok) throw new Error("No se pudo leer el Google Sheet (revisa que esté compartido como 'Cualquiera con el enlace - Lector').");
+    const text = await res.text();
+    const records = rowsToRecords(parseCsv(text));
+    demoBanner.hidden = true;
+    applyData(aggregate(records), records.length);
+  } catch (err) {
+    console.error(err);
+    errorBanner.textContent = err.message || "Ocurrió un error al cargar los datos.";
+    errorBanner.hidden = false;
+    demoBanner.hidden = false;
+    applyData(buildDemoData());
+  } finally {
+    cargando = false;
+    setRefreshButtonState(false);
+    document.getElementById("ultima-actualizacion").textContent =
+      "Actualizado " + new Date().toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
+  }
+}
+
+function applyData(data, totalFilas) {
+  renderGauges(data.ejeStats, data.ejeMasPresente, data.totalBase);
+  renderInsights(data.topInsights);
+  renderStrengthOpportunity(data.fortalezaColectiva, data.oportunidadColectiva);
+  renderCommitments(data.compromisos);
+  document.getElementById("footer-count").textContent =
+    typeof data.nParticipantesCompletados === "number"
+      ? ` · ${data.nParticipantesCompletados} participantes completados.`
+      : "";
+}
+
+function setRefreshButtonState(isLoading) {
+  const btn = document.getElementById("btn-actualizar");
+  const icon = document.getElementById("refresh-icon");
+  btn.disabled = isLoading;
+  icon.className = isLoading ? "spin" : "";
+  btn.childNodes[btn.childNodes.length - 1].textContent = isLoading ? " Actualizando…" : " Actualizar datos";
+}
+
+// Carrusel de compromisos — auto-scroll continuo, se pausa con hover o al usar las flechas
+const commitmentsTrack = document.getElementById("compromisos-track");
+let autoScrollPaused = false;
+let resumeTimeout = null;
+
+function pauseAutoScrollTemporarily(ms = 2500) {
+  autoScrollPaused = true;
+  clearTimeout(resumeTimeout);
+  resumeTimeout = setTimeout(() => { autoScrollPaused = false; }, ms);
+}
+
+document.getElementById("btn-prev").addEventListener("click", () => {
+  pauseAutoScrollTemporarily();
+  commitmentsTrack.scrollBy({ left: -300, behavior: "smooth" });
+});
+document.getElementById("btn-next").addEventListener("click", () => {
+  pauseAutoScrollTemporarily();
+  commitmentsTrack.scrollBy({ left: 300, behavior: "smooth" });
+});
+commitmentsTrack.addEventListener("mouseenter", () => { autoScrollPaused = true; });
+commitmentsTrack.addEventListener("mouseleave", () => { autoScrollPaused = false; });
+
+const AUTO_SCROLL_SPEED = 0.45; // px por frame (~27px/seg)
+function autoScrollStep() {
+  if (!autoScrollPaused && commitmentsTrack.scrollWidth > commitmentsTrack.clientWidth + 4) {
+    commitmentsTrack.scrollLeft += AUTO_SCROLL_SPEED;
+    if (commitmentsTrack.scrollLeft + commitmentsTrack.clientWidth >= commitmentsTrack.scrollWidth - 1) {
+      commitmentsTrack.scrollLeft = 0;
+    }
+  }
+  requestAnimationFrame(autoScrollStep);
+}
+requestAnimationFrame(autoScrollStep);
+
+document.getElementById("btn-actualizar").addEventListener("click", cargarDatos);
+
+cargarDatos();
+setInterval(cargarDatos, CONFIG.REFRESH_MS);
+</script>
+</body>
+</html>
